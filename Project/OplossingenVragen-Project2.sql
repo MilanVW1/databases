@@ -50,3 +50,37 @@ from Games.Uitgever
 select len(naam) as 'Lengte naam', naam
 from Games.Game
 order by len(naam)
+
+
+
+/* 3. Vragen ivm Joins */
+-- Vraag 1: Geef alle ontwikkelaars weer, waarvan het land overeen komt met de uitgever
+select o.naam, o.land
+from Games.Ontwikkelaar o
+inner join Games.Uitgever u on o.id = u.id --> left join is hier ook mogelijk
+where o.land = u.land
+
+-- Vraag 2: Geef alle uitgevers weer, die ook de ontwikkelaar zijn van hun spel
+select u.naam
+from Games.Uitgever u
+left join Games.Ontwikkelaar o on u.naam = o.naam
+where u.naam = o.naam
+
+-- Vraag 3: Geef alle actie-games weer
+select ga.naam
+from Games.Game ga
+left join Games.GenreGame gega on ga.id = gega.gameId
+left join Games.Genre ge on gega.genreId = ge.id
+where ge.naam = 'Action'
+
+-- Vraag 4: ...
+
+-- Vraag 5: ...
+
+
+/* 4 . Vragen ivm Subqueries */
+-- Vraag 1:
+-- Vraag 2:
+-- Vraag 3:
+-- Vraag 4:
+-- Vraag 5:
