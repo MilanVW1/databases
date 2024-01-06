@@ -1,4 +1,6 @@
+/*============================*/
 /* 1. Vragen ivm SELECT/WHERE */
+/*============================*/
 -- Vraag 1: Geef de naam van alle uitgevers die gevestigd zijn in Japan
 select naam
 from Games.Uitgever
@@ -25,8 +27,9 @@ from Games.Game
 where naam = 'Minecraft'
 
 
-
+/*=================================*/
 /* 2. Vragen ivm Scalaire Functies */
+/*=================================*/
 -- Vraag 1: Geef alle games met hun prijs weer, en rangschik deze vervolgens van goedkoopst naar het duurst. Het spel mag niet gratis zijn.
 select naam, prijs
 from Games.Game
@@ -52,8 +55,9 @@ from Games.Game
 order by len(naam)
 
 
-
+/*=====================*/
 /* 3. Vragen ivm Joins */
+/*=====================*/
 -- Vraag 1: Geef alle ontwikkelaars weer, waarvan het land overeen komt met de uitgever
 select o.naam, o.land
 from Games.Ontwikkelaar o
@@ -73,14 +77,66 @@ left join Games.GenreGame gega on ga.id = gega.gameId
 left join Games.Genre ge on gega.genreId = ge.id
 where ge.naam = 'Action'
 
--- Vraag 4: ...
+-- Vraag 4: Geef de naam van de game(s), waarvan de ontwikkelaar naam ... is.
+select g.naam
+from Games.Game g
+left join Games.Ontwikkelaar o on o.id = g.ontwikkelaarId
+where o.naam = 'Bethesda Game Studios'
 
 -- Vraag 5: ...
 
 
-/* 4 . Vragen ivm Subqueries */
+
+/*==========================*/
+/* 4. Vragen ivm Subqueries */
+/*==========================*/
+-- Vraag 1: Toon alle games die duurder zijn dan het gemiddelde van alle gameprijzen.
+select naam
+from Games.Game
+where prijs >
+(
+    select avg(prijs)
+    from Games.Game
+)
+
+-- Vraag 2: Geef de gemiddelde prijs van alle games uitgebracht door 'Capcom'
+select AVG(prijs) as 'Gemiddelde prijs van alle games v/ uitgever'
+from Games.Game
+where uitgeverId = 
+(
+    select id 
+    from Games.Uitgever 
+    where naam = 'Capcom'
+)
+
+-- Vraag 3: ...
+-- Vraag 4: ...
+-- Vraag 5: ...
+
+
+/*============================*/
+/* 5. Vragen ivm SET-functies */ 
+/*============================*/
+-- Vraag 1: Geef het gemiddelde van alle prijzen van de platformen (afgerond op 2 getallen na de komma)
+select round(avg(adviesprijs), 2) as 'Gemiddelde adviesprijs v/ alle platformen'
+from Games.Platform
+where adviesprijs is not null
+
+-- Vraag 2: Geef de laagste prijs dat een game kost
+select min(prijs)
+from Games.Game
+where prijs != 0
+
+-- Vraag 3: 
+
+
+
+/*==================================*/
+/* 6. Vragen ivm Group-By & Havings */ 
+/*==================================*/
 -- Vraag 1:
 -- Vraag 2:
 -- Vraag 3:
 -- Vraag 4:
 -- Vraag 5:
+
