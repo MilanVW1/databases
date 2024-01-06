@@ -55,6 +55,7 @@ from Games.Game
 order by len(naam)
 
 
+
 /*=====================*/
 /* 3. Vragen ivm Joins */
 /*=====================*/
@@ -77,13 +78,16 @@ left join Games.GenreGame gega on ga.id = gega.gameId
 left join Games.Genre ge on gega.genreId = ge.id
 where ge.naam = 'Action'
 
--- Vraag 4: Geef de naam van de game(s), waarvan de ontwikkelaar naam ... is.
+-- Vraag 4: Geef de naam van de game(s), waarvan de ontwikkelaar 'Bethesda Game Studios' is.
 select g.naam
 from Games.Game g
 left join Games.Ontwikkelaar o on o.id = g.ontwikkelaarId
 where o.naam = 'Bethesda Game Studios'
 
 -- Vraag 5: ...
+
+
+
 
 
 
@@ -114,6 +118,7 @@ where uitgeverId =
 -- Vraag 5: ...
 
 
+
 /*============================*/
 /* 5. Vragen ivm SET-functies */ 
 /*============================*/
@@ -127,7 +132,10 @@ select min(prijs)
 from Games.Game
 where prijs != 0
 
--- Vraag 3: 
+-- Vraag 3: Geef alle games waarvan de minimumleeftijd 16 jaar is
+select count(naam) as 'Aantal games met minimumleeftijd 16'
+from Games.Game
+where minimumLeeftijd = 16
 
 
 
