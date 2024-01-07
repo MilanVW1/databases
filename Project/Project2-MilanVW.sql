@@ -106,7 +106,7 @@ where prijs >
 )
 
 -- Vraag 2: Geef de gemiddelde prijs van alle games uitgebracht door 'Capcom'
-select AVG(prijs) as 'Gemiddelde prijs van alle games v/ uitgever'
+select avg(prijs) as 'Gemiddelde prijs van alle games v/ uitgever'
 from Games.Game
 where uitgeverId = 
 (
