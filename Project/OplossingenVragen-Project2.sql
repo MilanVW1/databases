@@ -27,6 +27,7 @@ from Games.Game
 where naam = 'Minecraft'
 
 
+
 /*=================================*/
 /* 2. Vragen ivm Scalaire Functies */
 /*=================================*/
@@ -88,9 +89,6 @@ where o.naam = 'Bethesda Game Studios'
 
 
 
-
-
-
 /*==========================*/
 /* 4. Vragen ivm Subqueries */
 /*==========================*/
@@ -132,7 +130,7 @@ select min(prijs)
 from Games.Game
 where prijs != 0
 
--- Vraag 3: Geef alle games waarvan de minimumleeftijd 16 jaar is
+-- Vraag 3: Geef het aantal games waarvan de minimumleeftijd 16 jaar is
 select count(naam) as 'Aantal games met minimumleeftijd 16'
 from Games.Game
 where minimumLeeftijd = 16
@@ -142,9 +140,36 @@ where minimumLeeftijd = 16
 /*==================================*/
 /* 6. Vragen ivm Group-By & Havings */ 
 /*==================================*/
--- Vraag 1:
--- Vraag 2:
--- Vraag 3:
--- Vraag 4:
--- Vraag 5:
+-- Vraag 1: Toon het aantal games per platform
+select p.naam, count(*) as 'Aantal games'
+from Games.GamePlatform gp
+left join Games.Platform p on p.id = gp.platformId
+group by p.naam
 
+-- Vraag 2: Toon alle genres en het games per genre, gesorteerd op het aantal games in aflopende volgorde. Het aantal games mag niet nul zijn.
+select ge.naam as 'Genre', count(gega.gameId) as 'Aantal games in genre'
+from Games.Genre ge
+left join Games.GenreGame gega on ge.id = gega.genreId
+group by ge.naam
+having count(gega.gameId) > 0
+order by 'Aantal games in genre' desc
+
+-- Vraag 3: Geef het aantal games per hardwareproducent, waar het aantal groter is dan 1
+select hp.naam as 'Hardwareproducent', count(*) as 'Aantal games per hardwareproducent'
+from Games.HardwareProducent hp
+left join Games.Platform p on hp.id = p.producentId
+left join Games.GamePlatform gp on p.id = gp.platformId
+group by hp.naam
+having count(*) > 1
+
+-- Vraag 4: Toon de landen van de uitgevers die 2 of meer games hebben 
+select u.land, count(uitgeverId) as 'Aantal games per land'
+from Games.Uitgever u
+left join Games.Game ga on u.id = ga.uitgeverId
+group by u.land
+having count(uitgeverId) >= 2
+
+-- Vraag 5: Toon het aantal consoles/ platformen die uitgebracht zijn per jaar
+select uitgaveJaar, count(naam) as 'Aantal platformen uitgebracht in uitgavejaar'
+from Games.Platform
+group by uitgaveJaar
