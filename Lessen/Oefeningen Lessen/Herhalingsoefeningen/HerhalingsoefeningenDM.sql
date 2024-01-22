@@ -70,6 +70,13 @@ order by 'Aantal behandelingen' asc, 'Kapperszaak' asc
 
 
 -- Oefening 7: 
+select CONCAT(k.naam, space(1), k.voornaam) as Kapperszaak, count(bt.id) as 'Aantal behandelingen'
+from DM_Oef3.Kapper k
+left join DM_Oef3.Behandeling b on k.id = b.kapperId
+left join DM_Oef3.BehandelingType bt on b.behandelingTypeId = bt.id
+group by CONCAT(k.naam, space(1), k.voornaam)
+having count(bt.id) > 0
+order by 'Aantal behandelingen'
 
 
 
@@ -80,15 +87,20 @@ where id IN
 (
     select kapperId
     from DM_Oef3.Behandeling b
-    where b.behandelingTypeId >= 1
+    where b.klantId is not null
 )
-order by 'Kapperszaak' desc -- ???????????????????????????????????????
-/* PROBEREN OM LATER AF TE MAKEN */
+order by 'Kapperszaak' desc
 
-
-
--- Oefening 9: later maken
-
+-- Oefening 9:
+select p.personeelsnummer as Personeelsnummer, CONCAT(p.naam, space(1), p.voornaam) as Personeelsnaam, a.naam as Afdeling, l.naam as 'Locatie afdeling', k.naam as Kwalificatie, pk.jaar as Behaald
+from DM_Oef5.Gemeente g
+left join DM_Oef5.Locatie l on g.id = l.gemeenteId
+left join DM_Oef5.Afdeling a on l.id = a.locatieId
+left join DM_Oef5.Personeelslid p on a.id = p.afdelingId
+left join DM_Oef5.PersoneelslidKwalificatie pk on p.id = pk.personeelslidId
+left join DM_Oef5.Kwalificatie k on k.id = pk.kwalificatieId
+where p.personeelsnummer is not null
+order by p.personeelsnummer
 
 
 -- Oefening 10:
@@ -101,4 +113,71 @@ group by p.voornaam, p.naam
 
 
 
--- Oefening 11 - 16, later eventueel maken
+-- Oefening 11
+select p.personeelsnummer as Personeelsnummer, CONCAT(p.naam, space(1), p.voornaam) as Personeel
+from DM_Oef5.Personeelslid p
+left join DM_Oef5.PersoneelslidKwalificatie pk on p.id = pk.personeelslidId
+where pk.jaar between 1975 and 1985
+order by p.personeelsnummer
+
+
+
+-- Oefening 12
+select CONCAT(YEAR(GETDATE()), '/', ohb.id) as 'Onderhoudsnummer', au.nummerplaat as 'Nummerplaat', mt.merk as 'Merk', mt.[type] as 'Type',  CONCAT(kl.naam, SPACE(1) , kl.voornaam, '(', count(obo.aantal), ')') as 'Klantnaam',
+case
+    when ohb.kmStand < 20000 then CONCAT('Minder dan ', 20.000, ' km')
+    when ohb.kmStand between 20000 and 50000 then CONCAT('Tussen ', 20.000, ' en ', 50.000, ' km')
+    when ohb.kmStand > 50000 then CONCAT('Meer dan ', 50.000, ' km') 
+end as Kilometerstand,
+CONVERT(varchar, ohb.datum, 5)
+from DM_Oef6.Onderdeel ond
+left join DM_Oef6.OnderhoudsbeurtOnderdeel obo on ond.id = obo.onderdeelId
+left join DM_Oef6.Onderhoudsbeurt ohb on ohb.id = obo.onderhoudsbeurtId
+left join DM_Oef6.[Auto] au on au.id = ohb.autoId
+left join DM_Oef6.MerkType mt on mt.id = au.merkTypeId
+left join DM_Oef6.Klant kl on kl.id = au.klantId
+group by ohb.kmStand, au.nummerplaat, mt.merk, mt.[type], kl.naam, kl.voornaam, ohb.datum, ohb.id
+order by ohb.id
+
+
+-- Oefening 13
+select au.nummerplaat AS 'Nummerplaat', ond.omschrijving AS 'Onderdelen', COUNT(ond.nummer) AS 'Aantal onderdelen'
+FROM DM_Oef6.[Onderdeel] ond
+left JOIN  DM_Oef6.OnderhoudsbeurtOnderdeel obo ON ond.id = obo.onderdeelId
+left JOIN DM_Oef6.Onderhoudsbeurt ohb ON ohb.id = obo.onderhoudsbeurtId
+left JOIN DM_Oef6.[Auto] au ON au.id = ohb.autoId
+left JOIN DM_Oef6.MerkType mt ON mt.id = au.merkTypeId
+left JOIN DM_Oef6.Klant kl ON kl.id = au.klantId
+group by au.nummerplaat, ond.omschrijving
+having COUNT(ond.nummer) > 1
+order by au.nummerplaat;
+
+
+
+-- Oefening 14
+select a.naam as Afdeling,
+case 
+    when m.voornaam is null then 'Open vacature'
+    when m.naam is null then 'Open vacature'
+    else concat(m.voornaam, space(1), m.naam)
+end as Afdelingshoofd
+from DM_Oef4.Afdeling a
+left join DM_Oef4.Medewerker m on m.id = a.medewerkerIdChef
+
+
+-- Oefening 15
+select a.naam as Afdeling,
+case 
+    when m.voornaam is null then 'Karel Put'
+    when m.naam is null then 'Karel Put'
+    else concat(m.voornaam, space(1), m.naam)
+end as Afdelingshoofd
+from DM_Oef4.Afdeling a
+left join DM_Oef4.Medewerker m on m.id = a.medewerkerIdChef
+
+
+
+-- Oefening 16
+--> fuck die kutoefening!!!!
+select *
+from DM_Oef8.Woonplaats

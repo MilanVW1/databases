@@ -938,7 +938,8 @@ CREATE TABLE DM_Oef8.Woonplaats
 (
     id       int IDENTITY (1,1) PRIMARY KEY,
     postcode varchar(6)   NOT NULL,
-    gemeente varchar(100) NOT NULL
+    gemeente varchar(100) NOT NULL,
+    provincie varchar(100) not null
 );
 
 CREATE TABLE DM_Oef8.Artikel
