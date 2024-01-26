@@ -1,5 +1,5 @@
 /*============================*/
-/* 1. Vragen ivm SELECT/WHERE */
+/* 1. Vragen ivm SELECT/WHERE */ --> ==> Van eigen hand | VERBETERD
 /*============================*/
 -- Vraag 1: Geef de naam van alle uitgevers die gevestigd zijn in Japan
 select naam
@@ -29,7 +29,7 @@ where naam = 'Minecraft'
 
 
 /*=================================*/
-/* 2. Vragen ivm Scalaire Functies */
+/* 2. Vragen ivm Scalaire Functies */ -- ==> Van eigen hand | VERBETERD
 /*=================================*/
 -- Vraag 1: Geef alle games met hun prijs weer, en rangschik deze vervolgens van goedkoopst naar het duurst. Het spel mag niet gratis zijn.
 select naam, prijs
@@ -38,16 +38,16 @@ where prijs > 0
 order by prijs
 
 -- Vraag 2: Geef in een zin weer, hoeveel de speler moet betalen om de game 'Red Dead Redemption 2' te spelen
-select 'De speler moet ' + CAST(prijs as varchar) + ' betalen om de game Red Dead Redemption 2 te spelen.' as 'Wat moet de speler betalen?'
+select 'De speler moet ' + cast(prijs as varchar) + ' betalen om de game Red Dead Redemption 2 te spelen.' as 'Wat moet de speler betalen?'
 from Games.Game
 where naam = 'Red Dead Redemption 2'
 
 -- Vraag 3: Toon de positie van de eerste letter 'e' die je tegenkomt, samen met de volledige naam.
-select charindex('e', naam), naam
+select charindex('e', naam) as 'Positie letter "e"', naam
 from Games.Platform
 
 -- Vraag 4: Toon de namen van alle uitgevers in hoofdletters.
-select upper(naam)
+select upper(naam) as 'Uitgevers'
 from Games.Uitgever
 
 -- Vraag 5: Geef de lengte weer van de namen van de games en toon hun volledige naam. Rangschik ze tenslotte obv hun lengte, van klein naar groot.
@@ -58,9 +58,9 @@ order by len(naam)
 
 
 /*=====================*/
-/* 3. Vragen ivm Joins */
+/* 3. Vragen ivm Joins */ -- ==> Van eigen hand | VERBETERD
 /*=====================*/
--- Vraag 1: Geef alle ontwikkelaars weer, waarvan het land overeen komt met de uitgever
+-- Vraag 1: Geef alle ontwikkelaars, samen met het land, waarvan het land overeen komt met de uitgever
 select o.naam, o.land
 from Games.Ontwikkelaar o
 inner join Games.Uitgever u on o.id = u.id --> left join is hier ook mogelijk
@@ -94,7 +94,7 @@ where hp.land = 'Taiwan'
 
 
 /*==========================*/
-/* 4. Vragen ivm Subqueries */
+/* 4. Vragen ivm Subqueries */ --> aangepast | VERBETERD
 /*==========================*/
 -- Vraag 1: Toon alle games die duurder zijn dan het gemiddelde van alle gameprijzen.
 select naam
@@ -104,6 +104,7 @@ where prijs >
     select avg(prijs)
     from Games.Game
 )
+
 
 -- Vraag 2: Geef de gemiddelde prijs van alle games uitgebracht door 'Capcom'
 select avg(prijs) as 'Gemiddelde prijs van alle games v/ uitgever'
@@ -115,6 +116,7 @@ where uitgeverId =
     where naam = 'Capcom'
 )
 
+
 -- Vraag 3: Toon het land waar de uitgever van het spel 'Resident Evil Village' zich bevindt.
 select land
 from Games.Uitgever
@@ -125,26 +127,22 @@ where id in
     where naam = 'Resident Evil Village (Resident Evil 8)'
 )
 
--- Vraag 4: Toon alle platforms waarop minstens één game is uitgebracht met een prijs lager dan het totale gemiddelde van alle gameprijzen.
-select p.naam as 'Naam platform'
-from Games.Platform p
-where exists 
+
+-- Vraag 4: Toon prijzen van de games, samen met de naam van de games, die ontwikkeld zijn door ontwikkelaar 'CD Projekt Red' ==> zelf gemaakt
+select prijs as 'Prijs van game', naam
+from Games.Game 
+where ontwikkelaarId =
 (
-    select *
-    from Games.Game ga
-    left join Games.GamePlatform gp ON ga.id = gp.gameId
-    where p.id = gp.platformId and ga.prijs < 
-    (
-        select avg(prijs) 
-        from Games.Game 
-        where prijs is not null
-    )
+    select id
+    from Games.Ontwikkelaar
+    where naam = 'CD Projekt Red'
 )
 
--- Vraag 5: Toon alle games die zijn uitgekomen op hetzelfde platform als de game met de hoogste prijs.
-select ga.naam
-from Games.Game ga
-where ga.prijs = 
+
+-- Vraag 5: Toon alle games die evenveel kosten als de game met de hoogste prijs.
+select naam
+from Games.Game 
+where prijs = 
 (
     select max(prijs) 
     from Games.Game 
@@ -152,9 +150,8 @@ where ga.prijs =
 )
 
 
-
 /*============================*/
-/* 5. Vragen ivm SET-functies */ 
+/* 5. Vragen ivm SET-functies */ -- ==> Van eigen hand | VERBETERD
 /*============================*/
 -- Vraag 1: Geef het gemiddelde van alle prijzen van de platformen (afgerond op 2 getallen na de komma)
 select round(avg(adviesprijs), 2) as 'Gemiddelde adviesprijs v/ alle platformen'
@@ -162,7 +159,7 @@ from Games.Platform
 where adviesprijs is not null
 
 -- Vraag 2: Geef de laagste prijs dat een game kost
-select min(prijs)
+select min(prijs) as 'Laagste prijs'
 from Games.Game
 where prijs != 0
 
@@ -174,38 +171,42 @@ where minimumLeeftijd = 16
 
 
 /*==================================*/
-/* 6. Vragen ivm Group-By & Havings */ 
+/* 6. Vragen ivm Group-By & Havings */ -- ==> Van eigen hand | VERBETERD
 /*==================================*/
 -- Vraag 1: Toon het aantal games per platform
-select p.naam, count(*) as 'Aantal games'
+select p.naam, count(*) as 'Aantal games per platform'
 from Games.GamePlatform gp
 left join Games.Platform p on p.id = gp.platformId
 group by p.naam
 
--- Vraag 2: Toon alle genres en het games per genre, gesorteerd op het aantal games in aflopende volgorde. Het aantal games mag niet nul zijn.
+
+-- Vraag 2: Toon alle genres gesorteerd op het aantal games binnen dat genre, en sorteer deze in aflopende volgorde. Het aantal games mag niet nul zijn.
 select ge.naam as 'Genre', count(gega.gameId) as 'Aantal games in genre'
-from Games.Genre ge
+from Games.Genre ge 
 left join Games.GenreGame gega on ge.id = gega.genreId
-group by ge.naam
+group by ge.naam 
 having count(gega.gameId) > 0
 order by 'Aantal games in genre' desc
 
+
 -- Vraag 3: Geef het aantal games per hardwareproducent, waar het aantal groter is dan 1
-select hp.naam as 'Hardwareproducent', count(*) as 'Aantal games per hardwareproducent'
+select hp.naam as 'Hardwareproducent', count(*) as 'Aantal games per hardware-producent'
 from Games.HardwareProducent hp
 left join Games.Platform p on hp.id = p.producentId
 left join Games.GamePlatform gp on p.id = gp.platformId
 group by hp.naam
 having count(*) > 1
 
--- Vraag 4: Toon de landen van de uitgevers die 2 of meer games hebben 
-select u.land, count(uitgeverId) as 'Aantal games per land'
-from Games.Uitgever u
-left join Games.Game ga on u.id = ga.uitgeverId
+
+-- Vraag 4: Toon de landen van de uitgevers die 2 of meer games hebben uitgebracht
+select u.land, count(g.uitgeverId) as 'Aantal games van uitgever'
+from Games.Game g 
+left join Games.Uitgever u on g.uitgeverId = u.id
 group by u.land
-having count(uitgeverId) >= 2
+having count(g.uitgeverId) >= 2
+
 
 -- Vraag 5: Toon het aantal consoles/ platformen die uitgebracht zijn per jaar
-select uitgaveJaar, count(naam) as 'Aantal platformen uitgebracht in uitgavejaar'
+select uitgaveJaar, count(naam) as 'Aantal platformen per jaar uitgebracht'
 from Games.Platform
 group by uitgaveJaar
